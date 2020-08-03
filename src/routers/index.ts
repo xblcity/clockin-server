@@ -33,4 +33,9 @@ export const AppRoutes: RouteItem[] = [
     method: "post",
     action: TimeController.postWakeTime,
   },
+  {
+    path: "/api/postSleepTime",
+    method: "post",
+    action: TimeController.postSleepTime,
+  },
 ];

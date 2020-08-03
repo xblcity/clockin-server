@@ -19,7 +19,9 @@ export class Day implements IDay.Item {
   )
   user: User;
 
-  // 一个day对应一个sleep, day拥有sleep
+  // 一个day对应一个sleep
+  // joinColumn的一侧，day表会多出 wakeId 列
+  // 查询的时候需要使用relations api
   @OneToOne(
     () => Wake,
     wake => wake.day
@@ -27,7 +29,7 @@ export class Day implements IDay.Item {
   @JoinColumn()
   wake: Wake;
 
-  // 一个day对应一个wake, day拥有wake
+  // 一个day对应一个wake
   @OneToOne(
     () => Sleep,
     sleep => sleep.day

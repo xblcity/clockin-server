@@ -11,6 +11,7 @@ export class User implements IUser.Item {
 
   // 一个user对应多个wake
   // 每个wake只对应一个user
+  // 对应到数据库，wake表会有一个userId键
   @OneToMany(
     () => Wake,
     wake => wake.user
@@ -19,6 +20,7 @@ export class User implements IUser.Item {
 
   // 一个user对应多个sleep
   // 每个sleep只对应一个user
+  // 对应到数据库，sleep表会有一个userId键
   @OneToMany(
     () => Sleep,
     sleep => sleep.user
@@ -27,6 +29,7 @@ export class User implements IUser.Item {
 
   // 一个user对应多个day
   // 每个day只对应一个user
+  // 对应到数据库，day表会有一个userId键
   @OneToMany(
     () => Day,
     day => day.user
