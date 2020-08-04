@@ -19,6 +19,7 @@ class TimeController {
     if (!targetUser) {
       ctx.status = 401;
       ctx.body = {
+        status: false,
         errMsg: "用户不存在",
       };
       return;
@@ -54,7 +55,8 @@ class TimeController {
 
       ctx.status = 200;
       ctx.body = {
-        data: "起床时间打卡成功1",
+        status: true,
+        data: "起床时间打卡成功",
       };
       return;
     }
@@ -63,6 +65,7 @@ class TimeController {
     if (targetDay.wake) {
       ctx.status = 400;
       ctx.body = {
+        status: false,
         errMsg: "当日起床时间已打卡",
       };
       return;
@@ -80,12 +83,14 @@ class TimeController {
     await userRepository.save(targetUser);
 
     // 存储到day
-    // targetDay.wake = value;
-    // await dayRepository.save(targetDay);
+    // targetDay.wake = value; wrong
+    targetDay.wake = newWakeTime;
+    await dayRepository.save(targetDay);
 
     ctx.status = 200;
     ctx.body = {
-      data: "起床时间打卡成功2",
+      status: true,
+      data: "起床时间打卡成功了",
     };
   }
 
@@ -104,6 +109,7 @@ class TimeController {
     if (!targetUser) {
       ctx.status = 401;
       ctx.body = {
+        status: false,
         errMsg: "用户不存在",
       };
       return;
@@ -139,7 +145,8 @@ class TimeController {
 
       ctx.status = 200;
       ctx.body = {
-        data: "睡觉时间打卡成功1",
+        status: true,
+        data: "睡觉时间打卡成功",
       };
       return;
     }
@@ -148,6 +155,7 @@ class TimeController {
     if (targetDay.sleep) {
       ctx.status = 400;
       ctx.body = {
+        status: false,
         errMsg: "当日睡觉时间已打卡",
       };
       return;
@@ -165,12 +173,13 @@ class TimeController {
     await userRepository.save(targetUser);
 
     // 存储到day
-    // targetDay.sleep = value;
-    // await dayRepository.save(targetDay);
+    targetDay.sleep = newSleepTime;
+    await dayRepository.save(targetDay);
 
     ctx.status = 200;
     ctx.body = {
-      data: "睡觉时间打卡成功2",
+      status: true,
+      data: "睡觉时间打卡成功了",
     };
   }
 
