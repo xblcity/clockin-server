@@ -38,4 +38,19 @@ export const AppRoutes: RouteItem[] = [
     method: "post",
     action: TimeController.postSleepTime,
   },
+  {
+    path: "/api/postDayList",
+    method: "post",
+    action: TimeController.postDayList,
+  },
+  {
+    path: "/api/postTimeList",
+    method: "post",
+    action: TimeController.postTimeList,
+  },
+  {
+    path: "/api/postTimeExtreme",
+    method: "post",
+    action: TimeController.postTimeExtreme,
+  },
 ];

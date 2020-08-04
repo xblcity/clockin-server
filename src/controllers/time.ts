@@ -27,7 +27,7 @@ class TimeController {
 
     // 查询目标日期
     const targetDay = await dayRepository.findOne({
-      where: {value: dateTime},
+      where: { value: dateTime },
       relations: ["wake"],
     });
 
@@ -117,7 +117,7 @@ class TimeController {
 
     // 查询目标日期
     const targetDay = await dayRepository.findOne({
-      where: {value: dateTime},
+      where: { value: dateTime },
       relations: ["wake", "sleep"],
     });
 
@@ -183,26 +183,102 @@ class TimeController {
     };
   }
 
-  public static async getWakeTimeList(ctx: Context) {
+  public static async postDayList(ctx: Context) {
     const userRepository = getManager().getRepository(User);
-    const user = await userRepository.findOne(ctx.query.id);
+    const { userId, start, end } = ctx.request.body;
 
-    if (user) {
+    if (!userId) {
+      ctx.status = 400;
+      ctx.body = {
+        status: false,
+        errMsg: "缺少必要参数",
+      };
+    }
+
+    const targetUser = await userRepository.findOne({
+      where: { id: userId },
+    });
+    if (!targetUser) {
+      ctx.status = 404;
+      ctx.body = {
+        status: false,
+        errMsg: "用户不存在",
+      };
+    }
+
+    // 查询days
+    const daysList = await userRepository
+      .createQueryBuilder("user")
+      .leftJoinAndSelect("user.days", "day")
+      .leftJoinAndSelect("day.sleep", "sleep")
+      .leftJoinAndSelect("day.wake", "wake")
+      .where("user.id = :id", { id: userId })
+      .select()
+      .getOne();
+
+    // 所需数据: 平均早起，平均早睡，平均睡眠
+    // 当日是否已打卡 日历
+
+    console.log(daysList);
+
+    if (targetUser) {
       ctx.status = 200;
-      ctx.body = user;
+      ctx.body = daysList;
     } else {
       ctx.status = 404;
     }
   }
 
-  public getEarliestTime(ctx: Context) {}
-
-  public static async getSleepAmount(ctx: Context) {
+  public static async postTimeList(ctx: Context) {
     const userRepository = getManager().getRepository(User);
-    await userRepository.delete(ctx.query.id);
-    // 当前区间范围，平均睡眠时间，
+    const { userId, start, end } = ctx.request.body;
 
-    ctx.status = 204;
+    if (!userId) {
+      ctx.status = 400;
+      ctx.body = {
+        status: false,
+        errMsg: "缺少必要参数",
+      };
+    }
+
+    const targetUser = await userRepository.findOne({
+      where: { id: userId },
+    });
+    if (!targetUser) {
+      ctx.status = 404;
+      ctx.body = {
+        status: false,
+        errMsg: "用户不存在",
+      };
+    }
+
+    // 查询wakes
+    const wakesList = await userRepository
+      .createQueryBuilder("user")
+      .leftJoinAndSelect("user.days", "day")
+      .leftJoinAndSelect("day.sleep", "sleep")
+      .leftJoinAndSelect("day.wake", "wake")
+      .where("user.id = :id", { id: userId })
+      .select()
+      .getOne();
+
+    // 查询 sleeps
+    // 查询 wakes
+
+    console.log(wakesList);
+
+    if (targetUser) {
+      ctx.status = 200;
+      ctx.body = wakesList;
+    } else {
+      ctx.status = 404;
+    }
+  }
+
+  public static postTimeExtreme(ctx: Context) {
+    // 查询 sleep Earliest
+    // 查询 wake Earliest
+    // 查询  sleepTime Earliest
   }
 }
 
