@@ -29,24 +29,14 @@ export const AppRoutes: RouteItem[] = [
     action: UserController.deleteUser,
   },
   {
-    path: "/api/postWakeTime",
+    path: "/api/postTime",
     method: "post",
-    action: TimeController.postWakeTime,
-  },
-  {
-    path: "/api/postSleepTime",
-    method: "post",
-    action: TimeController.postSleepTime,
+    action: TimeController.postTime,
   },
   {
     path: "/api/postDayList",
     method: "post",
     action: TimeController.postDayList,
-  },
-  {
-    path: "/api/postTimeList",
-    method: "post",
-    action: TimeController.postTimeList,
   },
   {
     path: "/api/postTimeExtreme",

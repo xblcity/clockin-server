@@ -1,5 +1,5 @@
 import { Entity, Column, ManyToOne, OneToOne, JoinColumn, PrimaryGeneratedColumn } from "typeorm";
-import { User, Wake, Sleep} from './index'
+import { User} from './index'
 
 @Entity()
 export class Day implements IDay.Item {
@@ -7,10 +7,16 @@ export class Day implements IDay.Item {
   id: number;
 
   @Column()
-  value: string;
+  dateTime: string;
 
   @Column()
-  sleepTime: number;
+  todaySleep: number;
+
+  @Column()
+  wakeTime: string;
+
+  @Column()
+  sleepTime: string;
 
   // 一个user对应多个day, day反向映射
   @ManyToOne(
@@ -18,24 +24,6 @@ export class Day implements IDay.Item {
     user => user.days
   )
   user: User;
-
-  // 一个day对应一个sleep
-  // joinColumn的一侧，day表会多出 wakeId 列
-  // 查询的时候需要使用relations api
-  @OneToOne(
-    () => Wake,
-    wake => wake.day
-  )
-  @JoinColumn()
-  wake: Wake;
-
-  // 一个day对应一个wake
-  @OneToOne(
-    () => Sleep,
-    sleep => sleep.day
-  )
-  @JoinColumn()
-  sleep: Sleep;
 
 }
 
