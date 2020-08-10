@@ -37,7 +37,6 @@ class TimeController {
     }
 
     const yesterday = moment(dateTime).subtract(1, "days").format("YYYY-MM-DD");
-    console.log(yesterday);
     const prevDay = await dayRepository.findOne({
       where: { dateTime: yesterday },
     });
@@ -88,12 +87,12 @@ class TimeController {
       return;
     }
 
-    if (!prevSleepTime && timeMarker === "wakeUpTime") {
+    if (!prevSleepTime && prevBedTime && timeMarker === "wakeUpTime") {
       const diffTime = moment(`${dateTime} ${wakeUpTime}`).diff(
         `${yesterday} ${prevBedTime}`,
         "minute"
       );
-      console.log(diffTime);
+      if (isNaN(diffTime)) return;
       const hTime = (diffTime / 60).toFixed(2);
       prevDay.sleepTime = hTime;
       await dayRepository.save(prevDay);
@@ -112,7 +111,8 @@ class TimeController {
 
   public static async postDayList(ctx: Context) {
     const userRepository = getManager().getRepository(User);
-    const { userId, start, end } = ctx.request.body;
+    // const { userId, type, start, end } = ctx.request.body;
+    const { userId, type = "week" } = ctx.request.body;
 
     if (!userId) {
       ctx.status = 400;
@@ -120,6 +120,24 @@ class TimeController {
         status: false,
         errMsg: "缺少必要参数",
       };
+    }
+
+    let start, end;
+    if (type === "week") {
+      // 第一步: 获取今天是本周的第几天
+      const weekOfDay = Number(moment().format("E"));
+      // 第二步: 获取本周周一的日期
+      start = moment()
+        .subtract(weekOfDay - 1, "days")
+        .format("YYYY-MM-DD");
+      // 第三步: 获取本周周末的日期
+      end = moment()
+        .add(7 - weekOfDay, "days")
+        .format("YYYY-MM-DD");
+    } else if (type === "month") {
+      // 获取第一天
+      start = moment().startOf("month").format("YYYY-MM-DD");
+      end = moment().endOf("month").format("YYYY-MM-DD");
     }
 
     const targetUser = await userRepository.findOne({
@@ -133,37 +151,77 @@ class TimeController {
       };
     }
 
-    // 查询days
+    console.log(start, end);
+
+    // 查询条件days
     const daysList = await userRepository
+      .createQueryBuilder("user")
+      .leftJoinAndSelect("user.days", "day")
+      .where("user.id = :id", { id: userId })
+      .andWhere("day.dateTime >= :start AND day.dateTime <= :end", {
+        start: start,
+        end: end,
+      })
+      .select()
+      .getOne();
+
+    // 查询所有days
+    const totalDaysList = await userRepository
       .createQueryBuilder("user")
       .leftJoinAndSelect("user.days", "day")
       .where("user.id = :id", { id: userId })
       .select()
       .getOne();
 
-    let averageWakeUpTime, averageBedTime, averageSleepTime;
-    if (daysList.days.length) {
+    let averageWakeUpTime,
+      averageBedTime,
+      averageSleepTime,
+      totalAverageWakeUpTime,
+      totalAverageBedTime,
+      totalAverageSleepTime;
+
+    const handleAverage = (daysList) => {
       const sleepTimeList = daysList.days
         .filter((item) => item.sleepTime)
         .map((item) => Number(item.sleepTime));
-      averageSleepTime = (
+
+      const averageSleepTimeResult = (
         sleepTimeList.reduce((prev, item) => prev + item, 0) /
         sleepTimeList.length
       ).toFixed(2);
 
-      averageWakeUpTime = calculateAverageTime(
+      const averageWakeUpTimeResult = calculateAverageTime(
         daysList.days
           .filter((item) => item.wakeUpTime)
           .map((item) => item.wakeUpTime)
       );
 
-      averageBedTime = calculateAverageTime(
+      const averageBedTimeResult = calculateAverageTime(
         daysList.days.filter((item) => item.bedTime).map((item) => item.bedTime)
       );
+
+      return [
+        averageSleepTimeResult,
+        averageWakeUpTimeResult,
+        averageBedTimeResult,
+      ];
+    };
+    if (daysList.days.length) {
+      const currentResult = handleAverage(daysList);
+      averageSleepTime = currentResult[0];
+      averageWakeUpTime = currentResult[1];
+      averageBedTime = currentResult[2];
+    }
+    if (totalDaysList.days.length) {
+      const totalResult = handleAverage(totalDaysList);
+      totalAverageSleepTime = totalResult[0];
+      totalAverageWakeUpTime = totalResult[1];
+      totalAverageBedTime = totalResult[2];
     }
 
     // 所需数据: 平均早起，平均早睡，平均睡眠
     // 打卡 list
+    // 所有数据：平均早起，平均早睡，平均睡眠
 
     if (targetUser) {
       ctx.status = 200;
@@ -172,6 +230,9 @@ class TimeController {
         averageSleepTime,
         averageWakeUpTime,
         averageBedTime,
+        totalAverageSleepTime,
+        totalAverageWakeUpTime,
+        totalAverageBedTime,
       };
     } else {
       ctx.status = 404;

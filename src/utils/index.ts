@@ -1,5 +1,5 @@
 export const parseCount = (value: number) => {
-  if (value <= 10) {
+  if (value < 10) {
     return `0${value}`;
   }
   return value;
@@ -10,7 +10,7 @@ export const calculateAverageTime = (listTime: string[]) => {
     minutes = 0,
     seconds = 0,
     total = listTime.length;
-  console.log(listTime);
+  // console.log(listTime);
   listTime.forEach((item) => {
     hours += Number(item.slice(0, 2));
     minutes += Number(item.slice(3, 5));
@@ -20,6 +20,6 @@ export const calculateAverageTime = (listTime: string[]) => {
   let hour = Math.floor(averageSeconds/60/60);
   let minute = Math.floor((averageSeconds - hour * 60 * 60)/60);
   let second = Math.floor((averageSeconds - hour * 60 *60 - minute * 60))
-  console.log(hour, minute, second);
+  // console.log(hour, minute, second);
   return `${parseCount(hour)}:${parseCount(minute)}:${parseCount(second)}`;
 };
