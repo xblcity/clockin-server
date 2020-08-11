@@ -19,11 +19,6 @@ export const AppRoutes: RouteItem[] = [
     action: UserController.listUser,
   },
   {
-    path: "/api/showUserDetail",
-    method: "get",
-    action: UserController.showUserDetail,
-  },
-  {
     path: "/api/deleteUser",
     method: "post",
     action: UserController.deleteUser,
