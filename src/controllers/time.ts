@@ -55,6 +55,7 @@ class TimeController {
       });
       await dayRepository.save(newDay);
 
+      // 如果昨天bedTime存在，今天wakeUpTime存在，存储sleepTime
       if (prevBedTime && wakeUpTime) {
         const diffTime = moment(`${dateTime} ${wakeUpTime}`).diff(
           `${yesterday} ${prevBedTime}`,
@@ -72,7 +73,7 @@ class TimeController {
       ctx.status = 200;
       ctx.body = {
         status: true,
-        data: "打卡成功",
+        successMsg: "打卡成功",
       };
       return;
     }
@@ -105,12 +106,13 @@ class TimeController {
     ctx.status = 200;
     ctx.body = {
       status: true,
-      data: "打卡成功了",
+      successMsg: "打卡成功!",
     };
   }
 
   public static async postDayList(ctx: Context) {
     const userRepository = getManager().getRepository(User);
+    // 之后可能会开放 type[年月周], start, end 起止时间
     // const { userId, type, start, end } = ctx.request.body;
     const { userId, type = "week" } = ctx.request.body;
 

@@ -11,7 +11,10 @@ class UserController {
     const { code } = ctx.request.body;
     if (!code) {
       ctx.status = 400;
-      ctx.body = "缺少code参数";
+      ctx.body = {
+        status: false,
+        errMsg: "缺少code参数",
+      };
       return;
     }
     const url = `${wxConfig.url}?appid=${wxConfig.appid}&secret=${wxConfig.secret}&js_code=${code}&grant_type=authorization_code`;
@@ -23,34 +26,52 @@ class UserController {
         if (errcode || errmsg) {
           ctx.status = 400;
           ctx.body = {
+            status: false,
+            errMsg: errmsg,
             errcode,
-            errmsg,
           };
           return;
         }
+
         const userRepository = getManager().getRepository(User);
         // 获取到openid，查询当前数据库是否存在此用户
         const targetUser = await userRepository.findOne({
           where: { openid },
-          relations: ["wakes"],
         });
         if (targetUser) {
           ctx.status = 200;
           ctx.body = {
-            userId: targetUser.id,
+            status: true,
+            data: {
+              userId: targetUser.id,
+            },
           };
           return;
         }
+
         // 新用户注册
         const newUser = userRepository.create({
           openid,
         });
-        userRepository.save(newUser);
+        await userRepository.save(newUser);
+        const newCurrentUser = await userRepository.findOne({
+          where: { openid },
+        });
         ctx.status = 200;
-        ctx.body = "注册成功";
+        ctx.body = {
+          status: true,
+          data: {
+            userId: newCurrentUser.id,
+          },
+        };
       })
       .catch((err) => {
         console.error(err);
+        ctx.status = 404;
+        ctx.body = {
+          status: false,
+          errMsg: "请求出错",
+        };
       });
   }
 
@@ -60,20 +81,12 @@ class UserController {
     const users = await userRepository.find();
 
     ctx.status = 200;
-    ctx.body = users;
-  }
-
-  // 获取某个用户数据
-  public static async showUserDetail(ctx: Context) {
-    const userRepository = getManager().getRepository(User);
-    const user = await userRepository.findOne(ctx.query.id);
-
-    if (user) {
-      ctx.status = 200;
-      ctx.body = user;
-    } else {
-      ctx.status = 404;
-    }
+    ctx.body = {
+      status: true,
+      data: {
+        users,
+      },
+    };
   }
 
   // 删除用户
@@ -82,6 +95,9 @@ class UserController {
     await userRepository.delete(ctx.query.id);
 
     ctx.status = 204;
+    ctx.body = {
+      status: true,
+    };
   }
 }
 
