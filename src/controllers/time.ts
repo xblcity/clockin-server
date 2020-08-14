@@ -118,7 +118,7 @@ class TimeController {
       }
     }
 
-    let weekStart, weekEnd, monthStart, momthEnd
+    let weekStart, weekEnd, monthStart, monthEnd
 
     // 第一步: 获取今天是本周的第几天
     const weekOfDay = Number(moment().format('E'))
@@ -132,7 +132,7 @@ class TimeController {
       .format('YYYY-MM-DD')
     // 获取第一天
     monthStart = moment().startOf('month').format('YYYY-MM-DD')
-    momthEnd = moment().endOf('month').format('YYYY-MM-DD')
+    monthEnd = moment().endOf('month').format('YYYY-MM-DD')
 
     const targetUser = await userRepository.findOne({
       where: { id: userId },
@@ -164,7 +164,7 @@ class TimeController {
       .where('user.id = :id', { id: userId })
       .andWhere('day.dateTime >= :start AND day.dateTime <= :end', {
         start: monthStart,
-        end: momthEnd,
+        end: monthEnd,
       })
       .select()
       .getOne()
@@ -212,6 +212,7 @@ class TimeController {
         status: true,
         data: {
           weekDaysList: weekDaysList.days,
+          monthDaysList: monthDaysList.days,
           weekSleepTime,
           weekWakeUpTime,
           weekBedTime,
