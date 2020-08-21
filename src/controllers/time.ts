@@ -194,8 +194,6 @@ class TimeController {
       const wakeUpTimeList = daysList.days.filter((item) => item.wakeUpTime).map((item) => item.wakeUpTime)
       const bedTimeList = daysList.days.filter((item) => item.bedTime).map((item) => item.bedTime)
 
-      console.log(bedTimeList,99)
-
       if (wakeUpTimeList && wakeUpTimeList.length) {
         averageWakeUpTimeResult = calculateAverageTime(wakeUpTimeList)
       }
