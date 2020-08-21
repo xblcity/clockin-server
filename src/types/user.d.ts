@@ -22,5 +22,5 @@ export interface Item {
   openid: string;
   // all days list。获取用户当月打卡记录-日历
   // sleepTime 获取用户睡眠时间记录
-  days: IDay.Item[];
+  days?: IDay.Item[];
 }

@@ -3,3 +3,4 @@ config.ts
 node_modules/
 config.js
 .vscode/
+dist/

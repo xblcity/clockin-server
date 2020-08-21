@@ -20,8 +20,9 @@ class UserController {
     const url = `${wxConfig.url}?appid=${wxConfig.appid}&secret=${wxConfig.secret}&js_code=${code}&grant_type=authorization_code`;
     await rp(url)
       .then(async (response) => {
-        // const res = JSON.parse(response);
-        const res = { openid: "76869958786843", errcode: null, errmsg: null };
+        const res = JSON.parse(response);
+        console.log(res)
+        // const res = { openid: "76869958786843", errcode: null, errmsg: null };
         const { errcode, errmsg, openid } = res;
         if (errcode || errmsg) {
           ctx.status = 400;

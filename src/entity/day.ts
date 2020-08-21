@@ -9,13 +9,13 @@ export class Day implements IDay.Item {
   @Column()
   dateTime: string;
 
-  @Column()
+  @Column({default: ''})
   sleepTime: string;
 
-  @Column()
+  @Column({default: ''})
   wakeUpTime: string;
 
-  @Column()
+  @Column({default: ''})
   bedTime: string;
 
   // 一个user对应多个day, day反向映射
