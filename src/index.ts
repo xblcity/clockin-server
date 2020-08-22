@@ -23,6 +23,6 @@ createConnection()
       .use(router.routes())
       .use(router.allowedMethods());
 
-    app.listen(3001);
+    app.listen(3002);
   })
   .catch((err: string) => console.log("TypeORM connection error", err));

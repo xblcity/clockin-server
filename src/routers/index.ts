@@ -9,32 +9,32 @@ export interface RouteItem {
 
 export const AppRoutes: RouteItem[] = [
   {
-    path: "/api/wxLogin",
+    path: "/wxLogin",
     method: "post",
     action: UserController.wxLogin,
   },
   {
-    path: "/api/listUser",
+    path: "/listUser",
     method: "get",
     action: UserController.listUser,
   },
   {
-    path: "/api/deleteUser",
+    path: "/deleteUser",
     method: "post",
     action: UserController.deleteUser,
   },
   {
-    path: "/api/postTime",
+    path: "/postTime",
     method: "post",
     action: TimeController.postTime,
   },
   {
-    path: "/api/postDayList",
+    path: "/postDayList",
     method: "post",
     action: TimeController.postDayList,
   },
   {
-    path: "/api/postTimeExtreme",
+    path: "/postTimeExtreme",
     method: "post",
     action: TimeController.postTimeExtreme,
   },
