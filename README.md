@@ -45,6 +45,8 @@ yarn add mysql typeorm reflect-metadata -S
 
 ## 运行
 
+启动数据库，执行以下命令
+
 ```js
 yarn dev
 ```
@@ -57,6 +59,4 @@ yarn build
 
 ## 部署
 
-```js
-pm2 start ./dist/index.js
-```
+使用 pm2 部署 dist 有问题，暂时未解决，直接在服务器以 dev 形式启动。
