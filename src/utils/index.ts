@@ -5,6 +5,7 @@ export const parseCount = (value: number) => {
   return value;
 };
 
+// 计算多日起床/睡觉时间点的平均值
 export const calculateAverageTime = (listTime: string[]) => {
   let hours = 0,
     minutes = 0,

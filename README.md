@@ -1,5 +1,13 @@
 # Clockin-Server
 
+本项目是[打卡小程序](https://github.com/xblcity/clockin)的对应后端。
+
+接口比较少，包含登录，打卡，展示打卡情况的一些接口。
+
+项目主要的技术栈是`ts`, `node`及`typeorm`。
+
+数据库比较简单，只有用户表和打卡时间统计表。
+
 ## 目录
 
 ```bash
@@ -39,4 +47,16 @@ yarn add mysql typeorm reflect-metadata -S
 
 ```js
 yarn dev
+```
+
+## 打包
+
+```js
+yarn build
+```
+
+## 部署
+
+```js
+pm2 start ./dist/index.js
 ```
